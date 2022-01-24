@@ -1,8 +1,9 @@
-import tensorflow.keras.models as models
-import tensorflow.keras.layers as layers
-import tensorflow.keras.losses as losses
-import tensorflow.keras.optimizer as optimizers
-import tensorflow.keras.utils as utils
+#import tensorflow.keras.models as models
+#import tensorflow.keras.layers as layers
+#import tensorflow.keras.losses as losses
+# import tensorflow.keras.optimizer as optimizers
+#import tf.keras.utils as utils
+from tensorflow.keras import utils
 
 def load_labels(labels_filename = str):
     # reads text from file based on passed in labels filename and creates a list of lists of each image's labels
@@ -19,7 +20,7 @@ train = utils.image_dataset_from_directory(
     shuffle = True,
     seed = 0,
     validation_split = 0.3,
-    subset = 'train',
+    subset = 'training',
 )
 
 val = utils.image_dataset_from_directory(
