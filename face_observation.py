@@ -10,6 +10,9 @@ def load_labels(labels_filename = str):
     # each label is in the form of a one-hot encoded vector with 40 attributes
     label_file = open(labels_filename, 'r')
     labels = label_file.readlines()
+    for i in range[2:]:
+        img = labels[i]
+        
     # next get rid of first two rows, and then 1st item in list
     return
 
