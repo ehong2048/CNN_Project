@@ -5,6 +5,8 @@ import tensorflow.keras.optimizers as optimizers
 from tensorflow.keras import utils
 
 # FOR NEXT TIME: Maybe just change to one attribute so that the dataset doesn't overlap (i.e. don't do multilabel classification)
+# Separate script to sort into folders for smiling and not smiling based on the text file
+
 
 def load_labels(labels_filename = str):
     """
@@ -15,29 +17,31 @@ def load_labels(labels_filename = str):
     labels = list(label_file.readlines()) # list of the labels for each image
     processed_labels = [] # initiates list of processed labels for the smiling trait of each image
     #for i in range(2, len(labels)):
-    for i in range(2, 5002):
-        img_labels = labels[i, 32] # labels of the indexed image/row
-        # img_labels = img_labels.split() #turns labels string into list
-        processed_labels.append(img_labels)
+    for i in range(2, 5002): 
+        img_labels = labels[i] # saves string for indexed image/row
+        img_labels = img_labels.split() #turns labels string into list
+        processed_labels.append(img_labels[32])
     
     print(f'Number of Images: {len(processed_labels)}')
     print(type(processed_labels))
     return processed_labels
 
 labels = load_labels('anno/list_attr_celeba.txt')
+print(labels[0:20])
 
 print("--Retreive training data--")
 train = utils.image_dataset_from_directory(
     '/Users/emma/Documents/CNN_Project/img_align_celeba',
     labels = None,
-    #label_mode = 'categorical',
+    label_mode = 'categorical',
     image_size=(218, 178),
-    shuffle = True,
+    shuffle = False,
     seed = 0,
     validation_split = 0.3,
     subset = 'training',
 )
 print(len(train))
+print(type(train))
 
 print("--Retreive val data--")
 val = utils.image_dataset_from_directory(
@@ -45,7 +49,7 @@ val = utils.image_dataset_from_directory(
     labels = None,
     # label_mode = 'categorical',
     image_size=(218, 178),
-    shuffle = True,
+    shuffle = False,
     seed = 0,
     validation_split = 0.3,
     subset = 'validation',
@@ -81,7 +85,7 @@ class Net():
 net = Net((218, 178, 3))
 print(net)
 
-net.model.fit(train, labels[0:3500])
+#net.model.fit(train, labels[0:3500])
 
 """
 net.fit(
