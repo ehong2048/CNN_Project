@@ -4,15 +4,15 @@ import tensorflow.keras.losses as losses
 import tensorflow.keras.optimizers as optimizers
 from tensorflow.keras import utils
 
+# FOR NEXT TIME: Fix validation accuracy - Why is it 0?!!
+
 # FOR NEXT TIME: Maybe just change to one attribute so that the dataset doesn't overlap (i.e. don't do multilabel classification)
 # Separate script to sort into folders for smiling and not smiling based on the text file
 
-
+"""
 def load_labels(labels_filename = str):
-    """
-    Purpose: reads text from file based on passed in labels filename and creates a list of lists of each image's labels
-    (each label is in the form of a one-hot encoded vector in string form with 40 attributes)
-   """
+    # Purpose: reads text from file based on passed in labels filename and creates a list of lists of each image's labels
+    # (each label is in the form of a one-hot encoded vector in string form with 40 attributes)
     label_file = open(labels_filename, 'r')
     labels = list(label_file.readlines()) # list of the labels for each image
     processed_labels = [] # initiates list of processed labels for the smiling trait of each image
@@ -28,6 +28,7 @@ def load_labels(labels_filename = str):
 
 labels = load_labels('anno/list_attr_celeba.txt')
 print(labels[0:20])
+"""
 
 print("--Retreive training data--")
 train = utils.image_dataset_from_directory(
