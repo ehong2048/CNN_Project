@@ -31,11 +31,10 @@ print(labels[0:20])
 
 print("--Retreive training data--")
 train = utils.image_dataset_from_directory(
-    '/Users/emma/Documents/CNN_Project/img_align_celeba',
-    labels = None,
+    'celeba_images',
     label_mode = 'categorical',
     image_size=(218, 178),
-    shuffle = False,
+    shuffle = True,
     seed = 0,
     validation_split = 0.3,
     subset = 'training',
@@ -45,11 +44,10 @@ print(type(train))
 
 print("--Retreive val data--")
 val = utils.image_dataset_from_directory(
-    'img_align_celeba',
-    labels = None,
-    # label_mode = 'categorical',
+    'celeba_images',
+    label_mode = 'categorical',
     image_size=(218, 178),
-    shuffle = False,
+    shuffle = True,
     seed = 0,
     validation_split = 0.3,
     subset = 'validation',
@@ -67,7 +65,8 @@ class Net():
         self.model.add(layers.Flatten())
         self.model.add(layers.Dense(1024, activation = 'relu'))
         self.model.add(layers.Dense(256, activation = 'relu'))
-        self.model.add(layers.Dense(40, activation = 'softmax'))
+        self.model.add(layers.Dense(60, activation = 'relu'))
+        self.model.add(layers.Dense(2, activation = 'softmax'))
         
         self.loss = losses.MeanSquaredError()
         self.optimizer = optimizers.Adam(learning_rate = 0.001)
@@ -85,10 +84,7 @@ class Net():
 net = Net((218, 178, 3))
 print(net)
 
-#net.model.fit(train, labels[0:3500])
-
-"""
-net.fit(
+net.model.fit(
     train,
     batch_size = 32,
     epochs = 200,
@@ -96,4 +92,3 @@ net.fit(
     validation_data = val,
     validation_batch_size = 32
 )
-"""
