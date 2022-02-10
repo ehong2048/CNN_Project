@@ -3,6 +3,7 @@ import tensorflow.keras.layers as layers
 import tensorflow.keras.losses as losses
 import tensorflow.keras.optimizers as optimizers
 from tensorflow.keras import utils
+import cv2
 
 # FOR NEXT TIME: Fix validation accuracy - Why is it 0?!!
 
@@ -29,6 +30,12 @@ def load_labels(labels_filename = str):
 labels = load_labels('anno/list_attr_celeba.txt')
 print(labels[0:20])
 """
+
+sample_img_path = "celeba_images/not_smiling/000003.jpg"
+image = cv2.imread(sample_img_path)
+cv2.imshow(f'Sample Image', image)
+print(f'Width: {image.shape[1]}, Height: {image.shape[0]}, Channels: {image.shape[2]}')
+cv2.waitKey(0)
 
 print("--Retreive training data--")
 train = utils.image_dataset_from_directory(
@@ -58,19 +65,28 @@ val = utils.image_dataset_from_directory(
 class Net():
     def __init__(self, image_size):
         self.model = models.Sequential() # layers are in sequence
-        self.model.add(layers.Conv2D(8, 13, strides = 3, input_shape = image_size, activation = 'relu')) # (output depth, frame size, kwargs)
-        self.model.add(layers.MaxPool2D(pool_size = 2)) # (frame size, kwargs, strides equals frame size as default
-        self.model.add(layers.Conv2D(16, 3))
-        self.model.add(layers.MaxPool2D(pool_size = 2))
+        
+        # Input = 218 x 178 x 3
+        # Frame = 0.05 of width 178 --> 9
+        self.model.add(layers.Conv2D(8, 9, strides = 2, padding = 'same', input_shape = image_size, activation = 'relu')) # (output depth, frame size, kwargs)
+        # Output Size = 106 x 85 x 8
+
+        self.model.add(layers.MaxPool2D(pool_size = 2, strides = 2)) # (frame size, kwargs, strides equals frame size as default
+        # Output Size = 53 x 42 x 8
+        
+        self.model.add(layers.Conv2D(8, 2, strides = 2, padding = 'same', activation = 'relu'))
+        self.model.add(layers.MaxPool2D(pool_size = 2, strides = 2))
+       
         # insert other layers
         self.model.add(layers.Flatten())
-        self.model.add(layers.Dense(1024, activation = 'relu'))
+        # self.model.add(layers.Dense(1024, activation = 'relu'))
         self.model.add(layers.Dense(256, activation = 'relu'))
-        self.model.add(layers.Dense(60, activation = 'relu'))
+        self.model.add(layers.Dense(64, activation = 'relu'))
+        self.model.add(layers.Dense(16, activation = 'relu'))
         self.model.add(layers.Dense(2, activation = 'softmax'))
         
-        self.loss = losses.MeanSquaredError()
-        self.optimizer = optimizers.Adam(learning_rate = 0.001)
+        self.loss = losses.BinaryCrossentropy()
+        self.optimizer = optimizers.Adam(learning_rate = 0.01, beta_1 = 0.8, amsgrad = True)
 
         self.model.compile(
             loss = self.loss,
