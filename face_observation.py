@@ -10,6 +10,10 @@ import cv2
 # FOR NEXT TIME: Maybe just change to one attribute so that the dataset doesn't overlap (i.e. don't do multilabel classification)
 # Separate script to sort into folders for smiling and not smiling based on the text file
 
+# 96% Accuracy!
+
+# To fix generalization problem: Add batch normalization and dropout (layers.dropout = 0.1 after convolutional layers or bigger ones after dense layers 30-50%)
+
 """
 def load_labels(labels_filename = str):
     # Purpose: reads text from file based on passed in labels filename and creates a list of lists of each image's labels
@@ -61,28 +65,39 @@ val = utils.image_dataset_from_directory(
     subset = 'validation',
 )
 
-
 class Net():
     def __init__(self, image_size):
         self.model = models.Sequential() # layers are in sequence
+
+        self.model.add(layers.BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
+
         
         # Input = 218 x 178 x 3
         # Frame = 0.05 of width 178 --> 9
         self.model.add(layers.Conv2D(8, 9, strides = 2, padding = 'same', input_shape = image_size, activation = 'relu')) # (output depth, frame size, kwargs)
-        # Output Size = 106 x 85 x 8
+        self.model.add(layers.Dropout(0.1))
 
+        # Output Size = 106 x 85 x 8
+        # INSERT BATCH NORMALIZATION
         self.model.add(layers.MaxPool2D(pool_size = 2, strides = 2)) # (frame size, kwargs, strides equals frame size as default
         # Output Size = 53 x 42 x 8
         
         self.model.add(layers.Conv2D(8, 2, strides = 2, padding = 'same', activation = 'relu'))
+        # INSERT BATCH NORMALIZATION
+        self.model.add(layers.Dropout(0.1))
+
         self.model.add(layers.MaxPool2D(pool_size = 2, strides = 2))
        
         # insert other layers
         self.model.add(layers.Flatten())
         # self.model.add(layers.Dense(1024, activation = 'relu'))
         self.model.add(layers.Dense(256, activation = 'relu'))
+        #self.model.add(layers.Dropout(0.3))
+        # Add dropout
         self.model.add(layers.Dense(64, activation = 'relu'))
+        #self.model.add(layers.Dropout(0.3))
         self.model.add(layers.Dense(16, activation = 'relu'))
+        #self.model.add(layers.Dropout(0.3))
         self.model.add(layers.Dense(2, activation = 'softmax'))
         
         self.loss = losses.BinaryCrossentropy()
@@ -99,6 +114,7 @@ class Net():
         return ""
 
 net = Net((218, 178, 3))
+net.model.build(input_shape=(10000, 218, 178, 3))
 print(net)
 
 net.model.fit(
