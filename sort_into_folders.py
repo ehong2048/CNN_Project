@@ -10,7 +10,7 @@ data = list(data.readlines()) # list of the labels for each image
 labels = [] # initiates list of processed labels for the smiling trait of each image
 img_filenames = [] # initiates list of image filenames
 
-for i in range(2, 5002): 
+for i in range(2, 10002): 
     img_data = data[i] # saves string for indexed image/row
     img_data = img_data.split() #turns labels string into list
 
@@ -28,6 +28,7 @@ for label in set(labels):
     subprocess.run(['mkdir', label])
 
 for i, filename in enumerate(img_filenames):
-    subprocess.run(['mv', 'img_align_celeba/' + filename, labels[i] + "/"])
+    if 'img_align_celeba/' + filename not in labels[i] + "/":
+        subprocess.run(['mv', 'img_align_celeba/' + filename, labels[i] + "/"])
 
 print("---Finished sorting data into smiling and non_smiling subdirectories!---")
