@@ -92,12 +92,12 @@ class Net():
         self.model.add(layers.Flatten())
         # self.model.add(layers.Dense(1024, activation = 'relu'))
         self.model.add(layers.Dense(256, activation = 'relu'))
-        #self.model.add(layers.Dropout(0.3))
+        self.model.add(layers.Dropout(0.3))
         # Add dropout
         self.model.add(layers.Dense(64, activation = 'relu'))
-        #self.model.add(layers.Dropout(0.3))
+        self.model.add(layers.Dropout(0.3))
         self.model.add(layers.Dense(16, activation = 'relu'))
-        #self.model.add(layers.Dropout(0.3))
+        self.model.add(layers.Dropout(0.3))
         self.model.add(layers.Dense(2, activation = 'softmax'))
         
         self.loss = losses.BinaryCrossentropy()
